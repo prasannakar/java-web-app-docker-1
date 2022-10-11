@@ -28,7 +28,7 @@ node{
     }
     
     stage("Deploy to docker swarm cluster"){
-        sshagent(['jenkinprivate']) {
+        sshagent(['dockerprivate']) {
             sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.92.255 docker service rm javawebapp || true'
             sh "ssh ubuntu@172.31.92.255 docker service create --name javawebapp -p 8080:8080 --replicas 2 prasannakar/javawebapp:${buildNumber}"
         }
