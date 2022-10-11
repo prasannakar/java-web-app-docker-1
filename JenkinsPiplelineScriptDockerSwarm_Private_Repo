@@ -1,4 +1,5 @@
-node{
+node
+{
     
    def buildNumber = BUILD_NUMBER
    
