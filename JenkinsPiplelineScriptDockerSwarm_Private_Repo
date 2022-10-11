@@ -3,7 +3,7 @@ node{
    def buildNumber = BUILD_NUMBER
    
     stage("Git CheckOut"){
-        git url: 'https://github.com/MithunTechnologiesDevOps/java-web-app-docker.git',branch: 'master'
+        git url: 'https://github.com/prasannakar/java-web-app-docker-1.git',branch: 'master'
     }
     
     stage(" Maven Clean Package"){
@@ -13,17 +13,17 @@ node{
     } 
     
     stage("Build Dokcer Image") {
-         sh "docker build -t 172.31.1.204:8083/java-web-app:${buildNumber} ."
+         sh "docker build -t 172.31.95.193:8080/javawebapp:${buildNumber} ." 
     }
     
     
     stage("Docker Push"){
         
        withCredentials([string(credentialsId: 'Docker_Repo_Pwd', variable: 'Docker_Repo_Pwd')]) {
-          sh "docker login -u admin -p ${Docker_Repo_Pwd}  172.31.1.204:8083"   
+        sh "docker login -u prasannakar -p ${Docker_Repo_Pwd} 172.31.95.193:8080"  
        }
        
-        sh "docker push 172.31.1.204:8083/java-web-app:${buildNumber}"
+        sh "docker push 172.31.95.193:8080/java-web-app:${buildNumber}"
     }
 
    stage("Deploy to docker swarm cluster"){
@@ -31,9 +31,9 @@ node{
       sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.10.56 docker service rm javawebapp || true'
       withCredentials([string(credentialsId: 'Docker_Repo_Pwd', variable: 'Docker_Repo_Pwd')]) {
  
-       sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.10.56 docker login -u admin -p ${Docker_Repo_Pwd}  172.31.1.204:8083"   
+       sh "ssh -o StrictHostKeyChecking=no ubuntu@172.31.92.255 docker login -u prasannakar -p ${Docker_Repo_Pwd}  172.31.95.193:8080"   
       }
-      sh "ssh ubuntu@172.31.10.56 docker service create --name javawebapp -p 7070:8080 --replicas 2 --with-registry-auth 172.31.1.204:8083/java-web-app:${buildNumber}"
+      sh "ssh ubuntu@172.31.92.255 docker service create --name javawebapp -p 8080:8080 --replicas 2 --with-registry-auth 172.31.95.193:8080/java-web-app:${buildNumber}"
     }
   }
     
