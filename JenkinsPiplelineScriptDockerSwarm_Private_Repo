@@ -28,7 +28,7 @@ node
     }
 
    stage("Deploy to docker swarm cluster"){
-     sshagent(['jenkinprivate']) {
+     sshagent(['dockerprivate']) {
       sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.92.255 docker service rm javawebapp || true'
       withCredentials([string(credentialsId: 'Docker_Repo_Pwd', variable: 'Docker_Repo_Pwd')]) {
  
